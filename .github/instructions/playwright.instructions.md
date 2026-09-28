@@ -74,11 +74,11 @@ test.describe('Movie Search Feature', () => {
 ## Authoring & Iteration Strategy
 
 > [!NOTE]
-> This file covers how specs should be written. To *run* the E2E suite, use the `quality-checks` skill — never invoke `npx playwright test` directly.
+> This file covers how specs should be written. Run the full suite with `npm run test:e2e`, or a single spec with `npx playwright test e2e-tests/<file>.spec.ts`.
 
-1. **Run**: Execute the suite through the `quality-checks` skill.
+1. **Run**: Execute the smallest relevant spec first, then the full suite.
 2. **Debug Failures**: Analyze test failures and identify root causes.
-3. **Iterate**: Refine locators, assertions, or test logic as needed, re-running through the skill.
+3. **Iterate**: Refine locators, assertions, or test logic as needed, then re-run.
 4. **Validate**: Ensure tests pass consistently and cover the intended functionality.
 5. **Report**: Provide feedback on test results and any issues discovered.
 
