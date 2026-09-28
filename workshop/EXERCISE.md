@@ -1,6 +1,6 @@
 # Exercise — make the engineering method repeatable
 
-**Time:** about 95 minutes in six modules, plus stretch goals · **Tool:** GitHub Copilot CLI in a Codespace (or locally)
+**Time:** about 100 minutes in six modules, plus stretch goals · **Tool:** GitHub Copilot CLI in a Codespace (or locally)
 
 You will fix a bug with a method, then build a new feature with methods written by someone else:
 
@@ -9,7 +9,7 @@ You will fix a bug with a method, then build a new feature with methods written 
 | 1 | [Fix a bug with a method](#module-1--fix-a-bug-with-a-method) | 25 | improve a skill · `explore` · `task` · a red test |
 | 2 | [Import a skill from the internet](#module-2--import-a-skill-from-the-internet) | 10 | install `grill-me`, find out why it half-works, fix it |
 | 3 | [Grill the feature, then write the spec](#module-3--grill-the-feature-then-write-the-spec) | 15 | answer design questions · adapt `to-spec` to this repo |
-| 4 | [Build it test-first](#module-4--build-it-test-first) | 30 | import `tdd` with its supporting files · red → green |
+| 4 | [Build it test-first](#module-4--build-it-test-first) | 35 | import `tdd` with its supporting files · red → green |
 | 5 | [Review in two independent contexts](#module-5--review-in-two-independent-contexts) | 10 | a skill that runs two subagents in parallel |
 | 6 | [Hand off and ship](#module-6--hand-off-and-ship) | 5 | `handoff` · commit · optional pull request |
 | ★ | [Finished early?](#finished-early) | — | write your own skill and test whether it is reused |
@@ -251,7 +251,7 @@ git add -A && git commit -m "Spec: catalog sorting"
 
 ## Module 4 — Build it test-first
 
-**30 min.** A skill makes "test first" the default. A subagent finds the seams. A separate subagent proves the result.
+**35 min.** A skill makes "test first" the default. A subagent finds the seams. A separate subagent proves the result.
 
 ### 4.1 Import `tdd` — the whole folder · 5 min
 
@@ -292,7 +292,7 @@ Return only:
 - the smallest vertical slices, in order
 ```
 
-### 4.4 Red, then green · 15 min
+### 4.4 Red, then green · 20 min
 
 ```text
 Use the tdd skill to implement docs/specs/catalog-sorting.md, using the explore findings.
