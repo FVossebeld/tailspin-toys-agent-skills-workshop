@@ -33,8 +33,9 @@ The Codespace installs [GitHub Copilot CLI](https://docs.github.com/en/copilot/h
 | `main` | Defect present, reproduction red, **incomplete** `diagnosing-bugs` skill (3 TODOs) | Exercise start (Module 1) |
 | `demo-start` | Defect present, reproduction red, **completed** skill | Facilitator live demo |
 | `checkpoint-feature` | Defect fixed, completed skill | Catch up at Module 2 |
-| `checkpoint-build` | + imported and adapted `grill-me`, `grilling`, `to-spec`, `tdd`, and a reference spec | Catch up at Module 4 |
-| `solution` | + catalog sorting with unit and E2E tests, adapted `code-review`, facilitator guide | Reference and fallback |
+| `checkpoint-grill` | + `grill-me` and `grilling`, working | Catch up at Module 3 |
+| `checkpoint-build` | + adapted `to-spec` and a reference spec | Catch up at Module 4 |
+| `solution` | + adapted `tdd` and `code-review`, catalog sorting with unit and E2E tests, facilitator guide | Reference and fallback |
 
 The tag `workshop-start` marks the original state of `main`. Please finish the exercise before opening `solution`.
 

@@ -14,7 +14,7 @@ You will fix a bug with a method, then build a new feature with methods written 
 | 6 | [Hand off and ship](#module-6--hand-off-and-ship) | 5 | `handoff` · commit · optional pull request |
 | ★ | [Finished early?](#finished-early) | — | write your own skill and test whether it is reused |
 
-Behind? Every module has a **checkpoint branch**, so you can join the next module at any time. See [Catch up](#catch-up).
+Behind? **Checkpoint branches** let you start Modules 2 to 6 without finishing the one before. See [Catch up](#catch-up).
 
 ## Setup (before the clock starts)
 
@@ -29,6 +29,8 @@ copilot
 ```
 
 Trust the folder when asked, and sign in with `/login` if prompted. When Copilot asks to run `npm`, you may approve it for the session.
+
+**Keep two terminals open:** one runs `copilot`, the other is a normal shell. Blocks marked `bash` in this guide go into the **shell**; blocks marked `text` are typed into **Copilot**, including the lines that start with `/` or `!`.
 
 Useful commands inside Copilot CLI:
 
@@ -171,6 +173,12 @@ The next feature request is vague on purpose:
 
 Before anyone writes code, you want Copilot to **interview you** about it. Matt Pocock's `grill-me` skill does exactly that. The links below are pinned to one commit, so everyone gets the same files.
 
+Start a branch for the feature first:
+
+```bash
+git switch -c feature/catalog-sorting
+```
+
 1. **Inspect before you install.** Open [`grill-me/SKILL.md`](https://github.com/mattpocock/skills/tree/c55ee46073ed923f86ce59a5eb3b6d895095d1b7/skills/productivity/grill-me/SKILL.md). How long is it? What does `disable-model-invocation: true` mean?
 2. **Install it** from inside Copilot CLI:
 
@@ -233,10 +241,10 @@ Do **not** run `/clear`: the next skill writes the spec from this conversation.
 3. **Adapt it to this repository.** Open `.github/skills/to-spec/SKILL.md` and change the method so that the spec is saved as `docs/specs/catalog-sorting.md`, with no issue tracker, labels or setup skill involved. That takes about three edits.
 4. `/skills reload`, then `/to-spec` again.
 
-**Checkpoint:** `docs/specs/catalog-sorting.md` exists and covers the sort options, where unrated games go, tie-breaks, the URL, what **Clear filters** does, and the test seams. Commit, and tag the point that the review in Module 5 compares against:
+**Checkpoint:** `docs/specs/catalog-sorting.md` exists and covers the sort options, where unrated games go, tie-breaks, the URL, what **Clear filters** does, and the test seams. Commit:
 
 ```bash
-git add -A && git commit -m "Spec: catalog sorting" && git tag spec-done
+git add -A && git commit -m "Spec: catalog sorting"
 ```
 
 ---
@@ -262,9 +270,13 @@ On Windows PowerShell, use `curl.exe` instead of `curl`.
 Open `.github/skills/tdd/SKILL.md`:
 
 - It points to a `codebase-design` skill that you do not have. Replace that pointer with one line of your own, or remove it.
-- Add a short **In this repository** section: where unit tests live, the catalog-test pattern, where the E2E specs live, and the exact commands to run one test file, the unit suite, lint and one E2E spec. `.github/skills/diagnosing-bugs/references/repository-testing.md` has them.
+- Add a short **In this repository** section: where unit tests live, the catalog-test pattern, where the E2E specs live, and the exact commands to run one test file, the unit suite, lint, `npm run typecheck:all` and one E2E spec. `.github/skills/diagnosing-bugs/references/repository-testing.md` has most of them.
 
-Then `/skills reload` and `/clear`.
+Then `/skills reload` and `/clear`. Commit, and tag the point that the review in Module 5 compares against:
+
+```bash
+git add -A && git commit -m "Import and adapt tdd" && git tag build-start
+```
 
 ### 4.3 Find the seams in a separate context · 4 min
 
@@ -285,6 +297,9 @@ Return only:
 ```text
 Use the tdd skill to implement docs/specs/catalog-sorting.md, using the explore findings.
 
+Scope for now: the sort module at the unit seam, then one E2E scenario:
+"Highest rated" reorders the cards and updates the status line. Stop there and list what is left.
+
 Confirm the seams with me before writing any test.
 One slice at a time: write one failing test, show me the red run, then write the minimal code to make it green.
 ```
@@ -294,9 +309,9 @@ Watch for:
 - Does it ask you to **confirm the seams** before writing a test?
 - Do you see a **red run** before every green run?
 - Are the expected values **independent literals**, not recomputed the way the code computes them?
-- When a new test passes straight away, does Copilot **say so** instead of pretending it was red?
+- When a new test passes straight away, does Copilot **say so**? Such a test has not proved anything yet: strengthen it until it can fail, or drop it.
 
-Short on time? Ask for the unit seam and one E2E scenario only; the rest can follow later.
+The remaining scenarios from the spec are a stretch goal (see [Finished early?](#finished-early)).
 
 ### 4.5 Verify separately · 3 min
 
@@ -304,13 +319,13 @@ Short on time? Ask for the unit seam and one E2E scenario only; the rest can fol
 Use the task subagent to verify the catalog-sorting feature.
 
 Do not change files.
-Run npm run test:unit, npm run lint, npm run typecheck and the E2E specs for filtering and sorting.
+Run npm run test:unit, npm run lint, npm run typecheck:all and the E2E specs for filtering and sorting.
 Return the exact commands and results.
 ```
 
 Optional: `npm run dev`, open the site and try **Sort by → Highest rated** with **4★ & up**.
 
-**Checkpoint:** new unit and E2E tests exist, you saw them fail before they passed, and the task subagent reports everything green. Commit:
+**Checkpoint:** new unit tests and one E2E scenario exist, you saw each fail before it passed, and the task subagent reports everything green. Commit:
 
 ```bash
 git add -A && git commit -m "Add catalog sorting"
@@ -332,10 +347,10 @@ git add -A && git commit -m "Add catalog sorting"
 3. Run it:
 
    ```text
-   Use the code-review skill to review the changes since spec-done against docs/specs/catalog-sorting.md.
+   Use the code-review skill to review the changes since build-start against docs/specs/catalog-sorting.md.
    ```
 
-4. For each finding, decide: **fix** it (with a failing test first) or **reject** it with a reason. Ask the task subagent to re-run the checks after any fix.
+4. For each finding, decide: **fix** it or **reject** it with a reason. A behavioural finding gets a failing test first; a consistency or refactoring finding can rely on the existing checks. Ask the task subagent to re-run the checks after any fix.
 
 **Checkpoint:** you saw two subagents run in parallel, their findings are reported under **Standards** and **Spec** separately, and every finding is fixed or rejected with a reason.
 
@@ -345,19 +360,19 @@ git add -A && git commit -m "Add catalog sorting"
 
 **5 min.**
 
-1. ```text
+1. Commit your review fixes, if you made any, so the handoff describes the final state:
+
+   ```bash
+   git status --short
+   git add -A && git commit -m "Apply review findings"   # only if git status listed changes
+   ```
+
+2. ```text
    Use the handoff skill to hand the catalog-sorting feature to a teammate who has not seen this session.
    ```
 
    Check that it references files, tests and commits by path instead of pasting them.
-2. Put your work on a branch and commit anything left over:
-
-   ```bash
-   git switch -c feature/catalog-sorting
-   git add -A && git commit -m "Apply review findings"
-   ```
-
-3. **Optional:** in your own copy of the repository (**Use this template**, or a fork with Actions enabled), push the branch and open a pull request to `main`. CI runs lint, unit and E2E tests, and Copilot code review on GitHub also reads the skills in `.github/skills/`.
+3. **Optional:** in your own copy of the repository (**Use this template**, or a fork with Actions enabled), push `feature/catalog-sorting` and open a pull request to `main`. CI runs lint, typecheck, unit and E2E tests, and Copilot code review on GitHub also reads the skills in `.github/skills/`.
 
 **Checkpoint:** a handoff another engineer could act on, and a branch whose checks are green.
 
@@ -367,10 +382,11 @@ git add -A && git commit -m "Add catalog sorting"
 
 Pick one.
 
-1. **Write your own skill from what you just did.** Create `.github/skills/adding-a-catalog-control/SKILL.md` (30 lines at most): where the pure helper goes, the `data-*` attributes, the URL key, the status line, the three test seams and the commands. Then `/skills reload`, `/clear` and ask: *"Add a search box that filters games by title."* Does Copilot load your skill and follow it? Do the tests prove the result?
-2. **A/B the method.** Run `!copilot skill disable tdd`, `/skills reload` and `/clear`, then ask for a small change such as *"Add a Title (Z–A) sort option."* Undo it with `git restore .`, run `!copilot skill enable tdd`, reload, clear and ask again. Which run wrote the test first?
-3. **Second opinion.** Run `/rubber-duck` on your spec or your implementation and compare its feedback with the `code-review` findings.
-4. **Let CI decide.** Open the pull request from Module 6 and watch the checks.
+1. **Finish the spec.** Ask the tdd skill for the remaining catalog and E2E scenarios in `docs/specs/catalog-sorting.md`, one red run at a time.
+2. **Write your own skill from what you just did.** Create `.github/skills/adding-a-catalog-control/SKILL.md` (30 lines at most): where the pure helper goes, the `data-*` attributes, the URL key, the status line, the three test seams and the commands. Then `/skills reload`, `/clear` and ask: *"Add a search box that filters games by title."* Does Copilot load your skill and follow it? Do the tests prove the result?
+3. **A/B the method.** Run `!copilot skill disable tdd`, `/skills reload` and `/clear`, then ask for a small change such as *"Add a Title (Z–A) sort option."* Undo it with `git restore .`, run `!copilot skill enable tdd`, reload, clear and ask again. Which run wrote the test first?
+4. **Second opinion.** Run `/rubber-duck` on your spec or your implementation and compare its feedback with the `code-review` findings.
+5. **Let CI decide.** Open the pull request from Module 6 and watch the checks.
 
 ---
 
@@ -379,19 +395,20 @@ Pick one.
 - [ ] **Module 1:** `npm run test:filter-bug`, `npm run test:unit` and `npm run lint` are green; a regression test would fail on the original code; no test expectation was weakened; you have an evidence report.
 - [ ] **Module 2:** `grill-me` works because its dependency is installed, and you can explain why it is two skills.
 - [ ] **Module 3:** `docs/specs/catalog-sorting.md` records your decisions, and `to-spec` writes a file instead of an issue.
-- [ ] **Module 4:** new tests went red before green; unit, lint, typecheck and E2E are green.
+- [ ] **Module 4:** the unit seam and one E2E scenario went red before green; unit, lint, `typecheck:all` and E2E are green.
 - [ ] **Module 5:** every review finding is fixed or rejected with a reason.
 - [ ] **Module 6:** a handoff someone else could continue from.
 
 ## Catch up
 
-Commit or stash your work first (`git stash -u`), then switch to the branch for the module you want to start:
+Commit or stash your work first (`git stash -u`), then run the command for the module you want to start **in the shell**:
 
 | Start at | Command | What you get |
 | --- | --- | --- |
-| Module 2 or 3 | `git fetch origin && git switch -c my-work origin/checkpoint-feature` | bug fixed, completed `diagnosing-bugs` |
-| Module 4 | `git fetch origin && git switch -c my-work origin/checkpoint-build && git tag -f spec-done` | + working `grill-me` and `grilling`, adapted `to-spec` and `tdd`, and a reference spec |
-| Module 5 | as for Module 4, then `git checkout origin/solution -- src e2e-tests && git commit -m "Reference implementation"` | + the reference implementation to review |
+| Module 2 | `git fetch origin && git switch -C feature/catalog-sorting origin/checkpoint-feature` | bug fixed, completed `diagnosing-bugs` |
+| Module 3 | `git fetch origin && git switch -C feature/catalog-sorting origin/checkpoint-grill` | + working `grill-me` and `grilling` |
+| Module 4 | `git fetch origin && git switch -C feature/catalog-sorting origin/checkpoint-build` | + adapted `to-spec` and a reference spec |
+| Module 5 or 6 | as for Module 4, then `git tag -f build-start && git checkout origin/solution -- src e2e-tests && git commit -m "Reference implementation"` | + the reference implementation to review and hand off |
 
 Then run `/skills reload` and `/clear` in Copilot CLI.
 

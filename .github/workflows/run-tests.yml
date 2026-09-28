@@ -8,7 +8,7 @@ on:
   pull_request:
     branches: [main]
   push:
-    branches: [solution, checkpoint-feature, checkpoint-build]
+    branches: [solution, checkpoint-feature, checkpoint-grill, checkpoint-build]
   workflow_dispatch:
 
 # Cancel superseded in-progress runs for the same ref so rapid pushes don't
