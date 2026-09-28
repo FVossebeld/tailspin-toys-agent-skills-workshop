@@ -8,6 +8,7 @@ The skills below are copied or adapted from [mattpocock/skills](https://github.c
 | `grilling` | `skills/productivity/grilling` | none |
 | `to-spec` | `skills/engineering/to-spec` | writes `docs/specs/<feature>.md` instead of publishing to an issue tracker |
 | `tdd` | `skills/engineering/tdd` | supporting files included; `codebase-design` reference replaced; repository section added |
+| `code-review` | `skills/engineering/code-review` | no issue-tracker setup; specs in `docs/specs/`; standards are the `.github` instructions |
 
 ## MIT License (mattpocock/skills)
 
