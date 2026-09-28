@@ -2,7 +2,14 @@
 
 > **The model remains probabilistic. The skill makes the method more repeatable. The subagent keeps bounded work focused. The test proves the outcome.**
 
-A hands-on workshop repository for GitHub Copilot. It is a fork of the [Tailspin Toys](https://github.com/github-samples/tailspin-toys) sample with one deliberately introduced defect, a prepared `diagnosing-bugs` skill, and a short exercise.
+A hands-on workshop repository for GitHub Copilot. It is a fork of the [Tailspin Toys](https://github.com/github-samples/tailspin-toys) sample with one deliberately introduced defect, a prepared `diagnosing-bugs` skill, and a 90-minute exercise in six modules:
+
+1. **Fix a bug with a method:** improve a skill, explore in a subagent, verify with a separate subagent.
+2. **Import a skill from the internet:** install Matt Pocock's `grill-me` and make it work.
+3. **Grill the feature, then write the spec:** design catalog sorting and adapt `to-spec` to this repository.
+4. **Build it test-first:** import `tdd` with its supporting files and go red → green.
+5. **Review in two independent contexts:** a `code-review` skill that runs two subagents in parallel.
+6. **Hand off and ship:** `handoff`, commit, optional pull request.
 
 [![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/FVossebeld/tailspin-toys-agent-skills-workshop?quickstart=1)
 
@@ -23,9 +30,11 @@ The Codespace installs [GitHub Copilot CLI](https://docs.github.com/en/copilot/h
 
 | Branch | State | Used for |
 | --- | --- | --- |
-| `main` | Defect present, reproduction red, **incomplete** `diagnosing-bugs` skill (3 TODOs) | Participant exercise |
+| `main` | Defect present, reproduction red, **incomplete** `diagnosing-bugs` skill (3 TODOs) | Exercise start (Module 1) |
 | `demo-start` | Defect present, reproduction red, **completed** skill | Facilitator live demo |
-| `solution` | Defect fixed, regression test added, completed skill, facilitator guide | Reference and fallback |
+| `checkpoint-feature` | Defect fixed, completed skill | Catch up at Module 2 |
+| `checkpoint-build` | + imported and adapted `grill-me`, `grilling`, `to-spec`, `tdd`, and a reference spec | Catch up at Module 4 |
+| `solution` | + catalog sorting with unit and E2E tests, adapted `code-review`, facilitator guide | Reference and fallback |
 
 The tag `workshop-start` marks the original state of `main`. Please finish the exercise before opening `solution`.
 
@@ -51,12 +60,14 @@ e2e-tests/filters.spec.ts               # browser-level filter checks
 workshop/EXERCISE.md                    # participant guide
 ```
 
+The imported skills come from [mattpocock/skills](https://github.com/mattpocock/skills), pinned to one commit so that every participant gets the same files. See `workshop/THIRD-PARTY-NOTICES.md` on the checkpoint branches.
+
 CI (`.github/workflows/run-tests.yml`) runs on pull requests to `main` and on pushes to `solution`. It does not run on pushes to `main`, because `main` is red on purpose.
 
 ## Credits
 
 - Application: [github-samples/tailspin-toys](https://github.com/github-samples/tailspin-toys) (MIT).
-- Skill method: adapted from Matt Pocock's [`diagnosing-bugs`](https://github.com/mattpocock/skills/tree/main/skills/engineering/diagnosing-bugs) and [`handoff`](https://github.com/mattpocock/skills/tree/main/skills/productivity/handoff) skills (MIT).
+- Skills: adapted from Matt Pocock's [skills](https://github.com/mattpocock/skills) (MIT): `diagnosing-bugs` and `handoff` here, plus `grill-me`, `grilling`, `to-spec`, `tdd` and `code-review` in the exercise.
 - Concepts: [About agent skills](https://docs.github.com/en/copilot/concepts/agents/about-agent-skills), [Copilot CLI context management](https://docs.github.com/en/copilot/concepts/agents/copilot-cli/context-management), [Agent Skills specification](https://agentskills.io/specification).
 
 ---
