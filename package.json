@@ -19,6 +19,7 @@
     "prebuild": "npm run db:setup",
     "predb:export": "npm run db:setup",
     "test:unit": "vitest run",
+    "test:filter-bug": "vitest run src/lib/game-filters.catalog.test.ts",
     "test:e2e": "playwright test",
     "test:e2e:install": "playwright install chromium",
     "typecheck": "tsgo --noEmit -p tsconfig.tsgo.json",
