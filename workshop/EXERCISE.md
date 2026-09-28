@@ -1,6 +1,6 @@
 # Exercise — make the engineering method repeatable
 
-**Time:** about 90 minutes in six modules, plus stretch goals · **Tool:** GitHub Copilot CLI in a Codespace (or locally)
+**Time:** about 95 minutes in six modules, plus stretch goals · **Tool:** GitHub Copilot CLI in a Codespace (or locally)
 
 You will fix a bug with a method, then build a new feature with methods written by someone else:
 
@@ -9,7 +9,7 @@ You will fix a bug with a method, then build a new feature with methods written 
 | 1 | [Fix a bug with a method](#module-1--fix-a-bug-with-a-method) | 25 | improve a skill · `explore` · `task` · a red test |
 | 2 | [Import a skill from the internet](#module-2--import-a-skill-from-the-internet) | 10 | install `grill-me`, find out why it half-works, fix it |
 | 3 | [Grill the feature, then write the spec](#module-3--grill-the-feature-then-write-the-spec) | 15 | answer design questions · adapt `to-spec` to this repo |
-| 4 | [Build it test-first](#module-4--build-it-test-first) | 25 | import `tdd` with its supporting files · red → green |
+| 4 | [Build it test-first](#module-4--build-it-test-first) | 30 | import `tdd` with its supporting files · red → green |
 | 5 | [Review in two independent contexts](#module-5--review-in-two-independent-contexts) | 10 | a skill that runs two subagents in parallel |
 | 6 | [Hand off and ship](#module-6--hand-off-and-ship) | 5 | `handoff` · commit · optional pull request |
 | ★ | [Finished early?](#finished-early) | — | write your own skill and test whether it is reused |
@@ -186,6 +186,8 @@ Before anyone writes code, you want Copilot to **interview you** about it. Matt 
 
    Watch the tool calls. Something is missing. Note what the interview looks like: how many questions at once, whether Copilot recommends answers, and whether it asks you things it could look up itself.
 
+   If Copilot offers to download the missing piece by itself, **decline** for now. You would not install an unreviewed dependency without reading it first, and a skill is no different.
+
 4. **Make it work.** Read the one-line body of the skill again, work out what it depends on, and install that too. (The upstream folder is [`skills/productivity`](https://github.com/mattpocock/skills/tree/c55ee46073ed923f86ce59a5eb3b6d895095d1b7/skills/productivity).) Then:
 
    ```text
@@ -194,7 +196,7 @@ Before anyone writes code, you want Copilot to **interview you** about it. Matt 
    /grill-me I want to add sorting to the game catalog on the home page.
    ```
 
-**Checkpoint:** `/skills list` shows both skills; the interview now comes in **numbered rounds**, each question has a **➡️ recommended answer**, and facts come from a **subagent** instead of from you.
+**Checkpoint:** `/skills list` shows both skills; the interview now comes in **numbered rounds**, each question has a **➡️ recommended answer**, and facts come from reading the code (often in a subagent) instead of from you.
 
 > **Why two skills?** `grill-me` is *user-invoked*: only you can start it, by typing `/grill-me`. It hands over to `grilling`, a *model-invoked* skill that holds the actual method and that other skills can reuse. `disable-model-invocation: true` is what keeps the model from starting `grill-me` on its own.
 
@@ -206,10 +208,11 @@ Before anyone writes code, you want Copilot to **interview you** about it. Matt 
 
 ### 3.1 Answer the interview · 8 min
 
-Keep going in the same conversation. Answer each round; accept, change or reject the recommendations.
+Keep going in the same conversation. Answer each round; accept, change or reject the recommendations, and end with *"Next round, please."*
 
 - **Challenge at least one recommendation** and see how the next round changes.
-- Watch which questions Copilot answers **by itself**, using a subagent to read the code.
+- Watch which questions Copilot answers **by itself**, by reading the code.
+- If Copilot starts **editing files**, press `Esc`. A grilling session ends in a shared understanding, not in code.
 - **Time-box it.** Grilling is relentless on purpose. After three rounds, say:
 
   ```text
@@ -240,7 +243,7 @@ git add -A && git commit -m "Spec: catalog sorting" && git tag spec-done
 
 ## Module 4 — Build it test-first
 
-**25 min.** A skill makes "test first" the default. A subagent finds the seams. A separate subagent proves the result.
+**30 min.** A skill makes "test first" the default. A subagent finds the seams. A separate subagent proves the result.
 
 ### 4.1 Import `tdd` — the whole folder · 5 min
 
@@ -277,7 +280,7 @@ Return only:
 - the smallest vertical slices, in order
 ```
 
-### 4.4 Red, then green · 10 min
+### 4.4 Red, then green · 15 min
 
 ```text
 Use the tdd skill to implement docs/specs/catalog-sorting.md, using the explore findings.
@@ -291,6 +294,9 @@ Watch for:
 - Does it ask you to **confirm the seams** before writing a test?
 - Do you see a **red run** before every green run?
 - Are the expected values **independent literals**, not recomputed the way the code computes them?
+- When a new test passes straight away, does Copilot **say so** instead of pretending it was red?
+
+Short on time? Ask for the unit seam and one E2E scenario only; the rest can follow later.
 
 ### 4.5 Verify separately · 3 min
 

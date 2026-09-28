@@ -2,7 +2,7 @@
 
 > **The model remains probabilistic. The skill makes the method more repeatable. The subagent keeps bounded work focused. The test proves the outcome.**
 
-A hands-on workshop repository for GitHub Copilot. It is a fork of the [Tailspin Toys](https://github.com/github-samples/tailspin-toys) sample with one deliberately introduced defect, a prepared `diagnosing-bugs` skill, and a 90-minute exercise in six modules:
+A hands-on workshop repository for GitHub Copilot. It is a fork of the [Tailspin Toys](https://github.com/github-samples/tailspin-toys) sample with one deliberately introduced defect, a prepared `diagnosing-bugs` skill, and a 95-minute exercise in six modules:
 
 1. **Fix a bug with a method:** improve a skill, explore in a subagent, verify with a separate subagent.
 2. **Import a skill from the internet:** install Matt Pocock's `grill-me` and make it work.
