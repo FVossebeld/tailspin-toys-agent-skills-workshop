@@ -1,6 +1,7 @@
 ---
 import type { Category } from '../types/game';
 import { FILTER_QUERY_KEYS, MIN_RATING_OPTIONS, minRatingLabel } from '../lib/game-filters';
+import { DEFAULT_SORT, SORT_OPTIONS, SORT_QUERY_KEY } from '../lib/game-sort';
 
 interface Props {
     categories: Category[];
@@ -16,7 +17,7 @@ const selectClass =
     id="game-filters"
     role="search"
     aria-label="Filter games"
-    class="mb-6 flex flex-col sm:flex-row sm:items-end gap-4 bg-slate-800/60 border border-slate-700/50 rounded-xl p-4"
+    class="mb-6 flex flex-col sm:flex-row sm:flex-wrap sm:items-end gap-4 bg-slate-800/60 border border-slate-700/50 rounded-xl p-4"
     data-testid="game-filters"
     data-total={total}
 >
@@ -36,6 +37,17 @@ const selectClass =
         </select>
     </div>
 
+    <div>
+        <label for="filter-sort" class="block text-sm font-medium text-slate-300 mb-1">Sort by</label>
+        <select id="filter-sort" name={SORT_QUERY_KEY} class={selectClass} data-testid="filter-sort">
+            {SORT_OPTIONS.map((option) => (
+                <option value={option.value} selected={option.value === DEFAULT_SORT}>
+                    {option.label}
+                </option>
+            ))}
+        </select>
+    </div>
+
     <button
         type="button"
         id="filter-clear"
@@ -52,10 +64,13 @@ const selectClass =
 
 <script>
     import { FILTER_QUERY_KEYS, matchesGameFilters, parseGameFilters, toFilterQuery, type GameFilters } from '../lib/game-filters';
+    import { SORT_QUERY_KEY, compareGames, parseGameSort, resultSummary, withSortQuery, type GameSort } from '../lib/game-sort';
 
     const form = document.querySelector<HTMLFormElement>('#game-filters');
     const ratingSelect = document.querySelector<HTMLSelectElement>('#filter-min-rating');
     const categorySelect = document.querySelector<HTMLSelectElement>('#filter-category');
+    const sortSelect = document.querySelector<HTMLSelectElement>('#filter-sort');
+    const grid = document.querySelector<HTMLElement>('[data-testid="games-grid"]');
     const clearButton = document.querySelector<HTMLButtonElement>('#filter-clear');
     const resultCount = document.querySelector<HTMLElement>('#filter-result-count');
     const emptyState = document.querySelector<HTMLElement>('[data-testid="filter-empty-state"]');
@@ -76,6 +91,22 @@ const selectClass =
         return parseGameFilters(params);
     }
 
+    function selectedSort(): GameSort {
+        return parseGameSort(new URLSearchParams({ [SORT_QUERY_KEY]: sortSelect?.value ?? '' }));
+    }
+
+    // Move the card elements themselves, so DOM order, tab order and visual order stay the same.
+    function sortCards(sort: GameSort): void {
+        const ordered = [...cards].sort((a, b) =>
+            compareGames(
+                { title: a.dataset.gameTitle ?? '', starRating: readNumber(a.dataset.starRating) },
+                { title: b.dataset.gameTitle ?? '', starRating: readNumber(b.dataset.starRating) },
+                sort,
+            ),
+        );
+        grid?.append(...ordered);
+    }
+
     function selectValue(select: HTMLSelectElement | null, value: number | null): void {
         if (!select) {
             return;
@@ -84,7 +115,9 @@ const selectClass =
         select.value = Array.from(select.options).some((option) => option.value === wanted) ? wanted : '';
     }
 
-    function applyFilters(filters: GameFilters): void {
+    function applyFilters(filters: GameFilters, sort: GameSort): void {
+        sortCards(sort);
+
         let visible = 0;
         for (const card of cards) {
             const matches = matchesGameFilters(
@@ -101,28 +134,31 @@ const selectClass =
         }
 
         if (resultCount) {
-            resultCount.textContent = `Showing ${visible} of ${cards.length} games`;
+            resultCount.textContent = resultSummary(visible, cards.length, sort);
         }
         if (emptyState) {
             emptyState.hidden = visible > 0;
         }
 
-        const query = toFilterQuery(filters).toString();
+        const query = withSortQuery(toFilterQuery(filters), sort).toString();
         history.replaceState(null, '', query ? `?${query}` : window.location.pathname);
     }
 
-    if (form && ratingSelect && categorySelect) {
-        const initial = parseGameFilters(new URLSearchParams(window.location.search));
+    if (form && ratingSelect && categorySelect && sortSelect) {
+        const params = new URLSearchParams(window.location.search);
+        const initial = parseGameFilters(params);
         selectValue(ratingSelect, initial.minRating);
         selectValue(categorySelect, initial.categoryId);
-        applyFilters(selectedFilters());
+        sortSelect.value = parseGameSort(params);
+        applyFilters(selectedFilters(), selectedSort());
 
-        form.addEventListener('change', () => applyFilters(selectedFilters()));
+        form.addEventListener('change', () => applyFilters(selectedFilters(), selectedSort()));
         form.addEventListener('submit', (event) => event.preventDefault());
+        // Clearing filters keeps the chosen sort: it changes which games are shown, not their order.
         clearButton?.addEventListener('click', () => {
             ratingSelect.value = '';
             categorySelect.value = '';
-            applyFilters(selectedFilters());
+            applyFilters(selectedFilters(), selectedSort());
             ratingSelect.focus();
         });
     }
