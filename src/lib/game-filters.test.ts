@@ -97,6 +97,14 @@ describe('meetsMinimumRating', () => {
     it('drops unrated games when a minimum rating is set', () => {
         expect(meetsMinimumRating(null, 3)).toBe(false);
     });
+
+    it.each([
+        [3, 3],
+        [4, 4],
+        [4.5, 4.5],
+    ])('keeps a game rated exactly at the minimum (%d with minimum %d)', (rating: number, minRating: number) => {
+        expect(meetsMinimumRating(rating, minRating)).toBe(true);
+    });
 });
 
 describe('matchesGameFilters', () => {

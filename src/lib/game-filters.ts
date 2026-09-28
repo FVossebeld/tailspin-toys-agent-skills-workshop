@@ -88,7 +88,7 @@ export function meetsMinimumRating(rating: number | null, minRating: number | nu
     if (rating === null) {
         return false;
     }
-    return rating > minRating;
+    return rating >= minRating;
 }
 
 /** Whether a game matches every active filter. */
