@@ -3,6 +3,7 @@ import { createTestDatabase } from '../../db/test-helpers';
 import { categories, publishers, games } from '../../db/schema';
 import type { Database } from './db';
 import {
+    getAllCategories,
     getAllGames,
     getAllGameIds,
     getGameById,
@@ -62,5 +63,19 @@ describe('games data-access helpers', () => {
     it('returns null for a non-existent game', async () => {
         await seedGames(db, 2);
         expect(await getGameById(db, 99999)).toBeNull();
+    });
+
+    it('returns all categories ordered by name', async () => {
+        await db.insert(categories).values([
+            { name: 'Strategy', description: 'cat' },
+            { name: 'Action', description: 'cat' },
+        ]);
+        const all = await getAllCategories(db);
+        expect(all.map((category) => category.name)).toEqual(['Action', 'Strategy']);
+        expect(all[0]).toEqual({ id: expect.any(Number), name: 'Action' });
+    });
+
+    it('returns no categories for an empty database', async () => {
+        expect(await getAllCategories(db)).toEqual([]);
     });
 });

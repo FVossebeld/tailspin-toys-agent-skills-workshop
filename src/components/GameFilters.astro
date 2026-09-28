@@ -1,0 +1,129 @@
+---
+import type { Category } from '../types/game';
+import { FILTER_QUERY_KEYS, MIN_RATING_OPTIONS, minRatingLabel } from '../lib/game-filters';
+
+interface Props {
+    categories: Category[];
+    total: number;
+}
+
+const { categories, total } = Astro.props;
+const selectClass =
+    'w-full sm:w-48 bg-slate-900 text-slate-100 border border-slate-600 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none';
+---
+
+<form
+    id="game-filters"
+    role="search"
+    aria-label="Filter games"
+    class="mb-6 flex flex-col sm:flex-row sm:items-end gap-4 bg-slate-800/60 border border-slate-700/50 rounded-xl p-4"
+    data-testid="game-filters"
+    data-total={total}
+>
+    <div>
+        <label for="filter-min-rating" class="block text-sm font-medium text-slate-300 mb-1">Minimum rating</label>
+        <select id="filter-min-rating" name={FILTER_QUERY_KEYS.minRating} class={selectClass} data-testid="filter-min-rating">
+            <option value="">Any rating</option>
+            {MIN_RATING_OPTIONS.map((value) => <option value={String(value)}>{minRatingLabel(value)}</option>)}
+        </select>
+    </div>
+
+    <div>
+        <label for="filter-category" class="block text-sm font-medium text-slate-300 mb-1">Category</label>
+        <select id="filter-category" name={FILTER_QUERY_KEYS.categoryId} class={selectClass} data-testid="filter-category">
+            <option value="">All categories</option>
+            {categories.map((category) => <option value={String(category.id)}>{category.name}</option>)}
+        </select>
+    </div>
+
+    <button
+        type="button"
+        id="filter-clear"
+        class="px-4 py-2 rounded-lg border border-slate-600 text-slate-200 hover:bg-slate-700 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+        data-testid="filter-clear"
+    >
+        Clear filters
+    </button>
+
+    <p id="filter-result-count" class="text-sm text-slate-300 sm:ml-auto" role="status" aria-live="polite" data-testid="filter-result-count">
+        Showing {total} of {total} games
+    </p>
+</form>
+
+<script>
+    import { FILTER_QUERY_KEYS, matchesGameFilters, parseGameFilters, toFilterQuery, type GameFilters } from '../lib/game-filters';
+
+    const form = document.querySelector<HTMLFormElement>('#game-filters');
+    const ratingSelect = document.querySelector<HTMLSelectElement>('#filter-min-rating');
+    const categorySelect = document.querySelector<HTMLSelectElement>('#filter-category');
+    const clearButton = document.querySelector<HTMLButtonElement>('#filter-clear');
+    const resultCount = document.querySelector<HTMLElement>('#filter-result-count');
+    const emptyState = document.querySelector<HTMLElement>('[data-testid="filter-empty-state"]');
+    const cards = Array.from(document.querySelectorAll<HTMLElement>('[data-testid="game-card"]'));
+
+    function readNumber(value: string | undefined): number | null {
+        if (value === undefined || value === '') {
+            return null;
+        }
+        const parsed = Number(value);
+        return Number.isFinite(parsed) ? parsed : null;
+    }
+
+    function selectedFilters(): GameFilters {
+        const params = new URLSearchParams();
+        params.set(FILTER_QUERY_KEYS.minRating, ratingSelect?.value ?? '');
+        params.set(FILTER_QUERY_KEYS.categoryId, categorySelect?.value ?? '');
+        return parseGameFilters(params);
+    }
+
+    function selectValue(select: HTMLSelectElement | null, value: number | null): void {
+        if (!select) {
+            return;
+        }
+        const wanted = value === null ? '' : String(value);
+        select.value = Array.from(select.options).some((option) => option.value === wanted) ? wanted : '';
+    }
+
+    function applyFilters(filters: GameFilters): void {
+        let visible = 0;
+        for (const card of cards) {
+            const matches = matchesGameFilters(
+                {
+                    starRating: readNumber(card.dataset.starRating),
+                    categoryId: readNumber(card.dataset.categoryId),
+                },
+                filters,
+            );
+            card.hidden = !matches;
+            if (matches) {
+                visible++;
+            }
+        }
+
+        if (resultCount) {
+            resultCount.textContent = `Showing ${visible} of ${cards.length} games`;
+        }
+        if (emptyState) {
+            emptyState.hidden = visible > 0;
+        }
+
+        const query = toFilterQuery(filters).toString();
+        history.replaceState(null, '', query ? `?${query}` : window.location.pathname);
+    }
+
+    if (form && ratingSelect && categorySelect) {
+        const initial = parseGameFilters(new URLSearchParams(window.location.search));
+        selectValue(ratingSelect, initial.minRating);
+        selectValue(categorySelect, initial.categoryId);
+        applyFilters(selectedFilters());
+
+        form.addEventListener('change', () => applyFilters(selectedFilters()));
+        form.addEventListener('submit', (event) => event.preventDefault());
+        clearButton?.addEventListener('click', () => {
+            ratingSelect.value = '';
+            categorySelect.value = '';
+            applyFilters(selectedFilters());
+            ratingSelect.focus();
+        });
+    }
+</script>
