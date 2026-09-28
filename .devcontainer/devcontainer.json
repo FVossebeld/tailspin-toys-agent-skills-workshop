@@ -1,10 +1,12 @@
 // For format details, see https://aka.ms/devcontainer.json. For config options, see the
 // README at: https://github.com/devcontainers/templates/tree/main/src/typescript-node
 {
-	"name": "Tailspin Toys (Astro + Drizzle + Node SQLite)",
+	"name": "Tailspin Toys — Agent Skills & Subagents workshop",
 	"image": "mcr.microsoft.com/devcontainers/typescript-node:1-22-bookworm",
 	"features": {
-		"ghcr.io/schlich/devcontainer-features/playwright:0": {}
+		"ghcr.io/schlich/devcontainer-features/playwright:0": {},
+		// GitHub Copilot CLI, used for the demo and the exercise (`copilot` in the terminal).
+		"ghcr.io/devcontainers/features/copilot-cli:1": {}
 	},
 	"customizations": {
 		"vscode": {
@@ -14,6 +16,9 @@
 				"astro-build.astro-vscode",
 				"dbaeumer.vscode-eslint"
 			]
+		},
+		"codespaces": {
+			"openFiles": ["workshop/EXERCISE.md", ".github/skills/diagnosing-bugs/SKILL.md"]
 		}
 	},
 	// Install Node dependencies, Playwright's Chromium browser, and set up the local SQLite database.

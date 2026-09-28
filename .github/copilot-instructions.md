@@ -18,12 +18,12 @@ This is a crowdfunding platform for games with a developer theme. The applicatio
 
 #### Testing guidelines
 
-- **Always run tests and lint through the `quality-checks` skill — never invoke `npm run test:unit`, `npm run test:e2e`, or `npm run lint` directly.** The skill wraps environment setup, ordering, and troubleshooting. (Starting the app for manual validation is not a quality check — run `npm run dev` directly for that.)
+- Run tests and lint with the npm scripts listed under [Scripts](#scripts). Prefer the smallest command that covers the change (for example a single Vitest file) before running a full suite.
 - Run Vitest unit tests to verify the data layer and transforms, and Playwright tests to verify e2e and frontend functionality
 - Run ESLint to check frontend code quality before committing
 - Review the existing tests to ensure we're not duplicating efforts
 - Test code should be of the same quality as the rest of the project, and follow DRY principles
-- For frontend changes, verify the build (`npm run build`) directly, and run the end-to-end tests through the `quality-checks` skill, to ensure everything works correctly
+- For frontend changes, verify the build (`npm run build`) and run the end-to-end tests (`npm run test:e2e`) to ensure everything works correctly
 - When changing the data layer (schema, helpers, transforms), update and run the corresponding unit tests
 
 #### Project guidelines
@@ -67,14 +67,15 @@ This is a crowdfunding platform for games with a developer theme. The applicatio
 
 ## Scripts
 
-- The project uses **npm scripts** for all development tasks — there is no `scripts/` directory.
-- **Skills take precedence.** Before running a command directly, check whether a skill covers the task (e.g. the `quality-checks` skill wraps tests and lint). If one applies, follow it.
+- The project uses **npm scripts** for all development tasks — there is no top-level `scripts/` directory.
+- **Skills take precedence.** Project skills live in `.github/skills/`. When a skill matches the task (for example `diagnosing-bugs` for a failing test or broken behaviour), follow its method.
 - Key npm scripts:
   - `npm run dev` — start the Astro dev server (`predev` migrates + seeds the local SQLite database)
   - `npm run build` — build the static site (`prebuild` migrates + seeds the local SQLite database)
   - `npm run preview` — serve the built `dist/` output
   - `npm run lint` — ESLint
   - `npm run test:unit` — Vitest unit tests
+  - `npm run test:filter-bug` — Vitest catalog-filter reproduction (`src/lib/game-filters.catalog.test.ts`) only
   - `npm run test:e2e` — Playwright E2E tests (builds + previews first)
   - `npm run typecheck` — type-check the pure TypeScript with `tsgo` (TypeScript 7 native compiler, via `@typescript/native-preview`) using `tsconfig.tsgo.json`
   - `npm run typecheck:astro` — type-check `.astro` files with `astro check` (classic TypeScript package)
@@ -90,12 +91,14 @@ This is a crowdfunding platform for games with a developer theme. The applicatio
 The application lives at the repository root:
 
 - `db/`: Drizzle schema, migrations, transforms, seed, and `games.csv`
-- `src/lib/`: Node SQLite client (`db.ts`) and data-access helpers (`games.ts`)
-- `src/components/`: reusable `.astro` components
+- `src/lib/`: Node SQLite client (`db.ts`), data-access helpers (`games.ts`), and pure helpers (`ratings.ts`, `game-filters.ts`)
+- `src/components/`: reusable `.astro` components (including the `GameFilters.astro` catalog filter controls)
 - `src/layouts/`: Astro layout templates
 - `src/pages/`: Astro page routes (`index.astro` listing, `game/[id].astro`, `404.astro`, `about.astro`)
 - `src/styles/`: CSS and Tailwind configuration
 - `src/types/`: TypeScript interfaces (Game, Publisher, Category)
-- `e2e-tests/`: Playwright E2E tests (home, games, accessibility)
+- `e2e-tests/`: Playwright E2E tests (home, games, filters, accessibility)
+- `.github/skills/`: project Agent Skills; `.github/agents/`: custom agents
+- `workshop/`: participant guide for the Agent Skills & subagents workshop
 - `drizzle.config.ts`, `vitest.config.ts`, `astro.config.mjs`, `playwright.config.ts`: tooling config
 - `README.md`: Project documentation

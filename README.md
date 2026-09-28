@@ -1,4 +1,67 @@
-# Tailspin Toys
+# Tailspin Toys — Agent Skills & Subagents workshop
+
+> **The model remains probabilistic. The skill makes the method more repeatable. The subagent keeps bounded work focused. The test proves the outcome.**
+
+A hands-on workshop repository for GitHub Copilot. It is a fork of the [Tailspin Toys](https://github.com/github-samples/tailspin-toys) sample with one deliberately introduced defect, a prepared `diagnosing-bugs` skill, and a short exercise.
+
+[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/FVossebeld/tailspin-toys-agent-skills-workshop?quickstart=1)
+
+## Start the exercise
+
+1. Open a Codespace on `main` (button above) — or clone locally with Node.js 22.13+ and run `npm ci`.
+2. Run the reproduction. It is **meant to fail**:
+
+   ```bash
+   npm run test:filter-bug
+   ```
+
+3. Follow [`workshop/EXERCISE.md`](workshop/EXERCISE.md).
+
+The Codespace installs [GitHub Copilot CLI](https://docs.github.com/en/copilot/how-tos/copilot-cli) for you. Locally, install it with `npm install -g @github/copilot`, `winget install GitHub.Copilot` or `brew install --cask copilot-cli`, then run `copilot` from the repository root.
+
+## Branches
+
+| Branch | State | Used for |
+| --- | --- | --- |
+| `main` | Defect present, reproduction red, **incomplete** `diagnosing-bugs` skill (3 TODOs) | Participant exercise |
+| `demo-start` | Defect present, reproduction red, **completed** skill | Facilitator live demo |
+| `solution` | Defect fixed, regression test added, completed skill, facilitator guide | Reference and fallback |
+
+The tag `workshop-start` marks the original state of `main`. Please finish the exercise before opening `solution`.
+
+## What the workshop adds
+
+```text
+.github/
+├── agents/investigator.agent.md        # read-only custom agent (optional)
+└── skills/
+    ├── diagnosing-bugs/
+    │   ├── SKILL.md                    # the method: red loop → hypotheses → fix → evidence
+    │   ├── references/
+    │   │   ├── architecture-summary.md
+    │   │   └── repository-testing.md
+    │   └── scripts/
+    │       ├── feedback-loop.mjs       # runs a command N times: red/green, deterministic, fast?
+    │       └── reproduce-filter-bug.sh
+    └── handoff/SKILL.md
+src/lib/game-filters.ts                 # catalog filters (contains the defect on main)
+src/lib/game-filters.catalog.test.ts    # the provided reproduction (npm run test:filter-bug)
+src/components/GameFilters.astro        # filter controls on the home page
+e2e-tests/filters.spec.ts               # browser-level filter checks
+workshop/EXERCISE.md                    # participant guide
+```
+
+CI (`.github/workflows/run-tests.yml`) runs on pull requests to `main` and on pushes to `solution`. It does not run on pushes to `main`, because `main` is red on purpose.
+
+## Credits
+
+- Application: [github-samples/tailspin-toys](https://github.com/github-samples/tailspin-toys) (MIT).
+- Skill method: adapted from Matt Pocock's [`diagnosing-bugs`](https://github.com/mattpocock/skills/tree/main/skills/engineering/diagnosing-bugs) and [`handoff`](https://github.com/mattpocock/skills/tree/main/skills/productivity/handoff) skills (MIT).
+- Concepts: [About agent skills](https://docs.github.com/en/copilot/concepts/agents/about-agent-skills), [Copilot CLI context management](https://docs.github.com/en/copilot/concepts/agents/copilot-cli/context-management), [Agent Skills specification](https://agentskills.io/specification).
+
+---
+
+# About the Tailspin Toys app
 
 Tailspin Toys is a crowdfunding platform for games with a developer theme. The project is a website for a fictional game crowd-funding company, built as a single [Astro](https://astro.build/) site (fully prerendered/static output) styled with [Tailwind CSS](https://tailwindcss.com/). Its data lives in a local SQLite database accessed through [Drizzle ORM](https://orm.drizzle.team/) and Node.js's built-in SQLite driver; pages query the database directly in frontmatter at build time, so there is no separate backend service.
 
@@ -12,11 +75,7 @@ Tailspin Toys is a crowdfunding platform for games with a developer theme. The p
 
 The database is migrated and seeded automatically before `dev`/`build` (via the `predev`/`prebuild` npm scripts) and is written to the gitignored `tailspin.db` file.
 
-## Using this template
-
-This repository is a GitHub template. When you create a new repository from it, a one-time **Bootstrap template issues** workflow (`.github/workflows/bootstrap-issues.yml`) runs automatically on the first push to `main` and opens a set of starter issues describing suggested first features. Each issue is defined by a Markdown file in `.github/bootstrap-issues/` — the first heading becomes the issue title and the remaining content becomes the body — so you can edit, add, or remove files there to control which issues are created.
-
-The workflow only runs on repositories created from the template (the `if: ${{ !github.event.repository.is_template }}` guard skips the template itself), and after creating the issues it removes itself and the `.github/bootstrap-issues/` folder in a cleanup commit so it never runs again.
+The home page lets visitors filter the catalog by **minimum rating** and **category**. Filtering runs in the browser with the pure helpers in `src/lib/game-filters.ts`, and a filtered view can be shared through the query string (for example `/?minRating=4`).
 
 ## Getting started
 
@@ -60,23 +119,20 @@ npm run db:export     # write the seeded catalog to db/catalog.json
 ## Running tests
 
 ```bash
-npm run test:unit   # Vitest unit tests (transforms + data-access helpers)
-npm run test:e2e    # Playwright E2E tests (builds + previews the static site first)
+npm run test:filter-bug   # the workshop reproduction only (Vitest)
+npm run test:unit         # all Vitest unit tests (transforms + data-access + filter helpers)
+npm run test:e2e          # Playwright E2E tests (builds + previews the static site first)
 ```
 
 ## Linting
-
-The frontend uses ESLint to enforce code quality across TypeScript and Astro files. Run it with:
 
 ```bash
 npm run lint
 ```
 
-ESLint is also run automatically in CI on pull requests to `main`.
-
 ## Type checking
 
-The project runs on **TypeScript 7** (the native Go compiler, `tsgo`) for type checking, adopted side-by-side via the [`@typescript/native-preview`](https://www.npmjs.com/package/@typescript/native-preview) package. The classic `typescript` package is intentionally kept at v6 so ESLint + `typescript-eslint` and `astro check` keep working unchanged — TypeScript 7's programmatic API isn't ready for those tools yet.
+The project runs on **TypeScript 7** (the native Go compiler, `tsgo`) for type checking, adopted side-by-side via the [`@typescript/native-preview`](https://www.npmjs.com/package/@typescript/native-preview) package. The classic `typescript` package is intentionally kept at v6 so ESLint + `typescript-eslint` and `astro check` keep working unchanged.
 
 ```bash
 npm run typecheck        # tsgo (TS 7) type-checks the pure TypeScript (db/, src/lib/, src/types/, configs, tests)
@@ -84,58 +140,10 @@ npm run typecheck:astro  # astro sync + astro check type-check .astro files (on 
 npm run typecheck:all    # both of the above
 ```
 
-`tsgo` runs against [`tsconfig.tsgo.json`](tsconfig.tsgo.json), a scoped config that excludes `.astro` files (which the native compiler doesn't understand). Type checking runs automatically in CI on pull requests to `main`.
-
-> [!NOTE]
-> The native compiler is used only for type checking (`--noEmit`); the site is still built by `astro build` (Vite/esbuild). The classic `typescript` package stays on v6 until `typescript-eslint` and `@astrojs/check` support the native API (~TS 7.1); a Dependabot `ignore` in `.github/dependabot.yml` holds the classic `typescript@7` bump until then.
-
-## Copilot Agents & Skills
-
-This project ships Copilot customizations to assist with quality assurance:
-
-### Database Explorer Canvas
-
-The shared **Database Explorer** canvas (`.github/extensions/database-explorer/`) provides a small UI and agent actions for browsing the project's SQLite tables and running one read-only `SELECT` or `WITH` query at a time. It uses the database at `.data/tailspin.db` (or `DATABASE_URL` when set), so run `npm run db:setup` before opening it in a fresh checkout.
-
-### PR Readiness Agent
-
-The **PR Readiness** agent (`.github/agents/pr-readiness.md`) is a pre-PR quality gate. Invoke it before opening a pull request to:
-
-- Verify all acceptance criteria have been implemented
-- Audit test coverage and fill any gaps
-- Run the full verification suite (unit tests, lint, E2E tests)
-- Manually validate the feature in the browser via Playwright MCP (required for every run)
-- Produce a go/no-go report
-
-### quality-checks Skill
-
-The **quality-checks** skill (`.github/skills/quality-checks/SKILL.md`) wraps the project's npm test and lint commands with a detailed debugging and troubleshooting runbook. Use it via `/quality-checks` when:
-
-- Running tests or lint for the first time after setup
-- Diagnosing test failures (port conflicts, stale servers, flaky tests, CI divergence)
-- Validating readiness before commits, pushes, or merges
-
-### GitHub Copilot App Run Menu
-
-The [GitHub Copilot app](https://github.com/github/github-app) reads
-`.github/github-app.yml` to provide project commands in its **Run** menu.
-New sessions automatically install dependencies; use **Run development site** to
-start Astro. When Astro reports its local URL, the app opens it in the browser
-canvas automatically. The menu also provides static build and type-check
-commands for on-demand validation.
-
-## License 
+## License
 
 This project is licensed under the terms of the MIT open source license. Please refer to the [LICENSE](./LICENSE) for the full terms.
 
-## Maintainers 
-
-You can find the list of maintainers in [CODEOWNERS](./.github/CODEOWNERS).
-
-## Support
-
-This project is provided as-is, and may be updated over time. If you have questions, please open an issue.
-
 ## Disclaimer
 
-This app is not intended for use in a production environment, nor is it built as an example of what a production app should look like.
+This app is not intended for use in a production environment, nor is it built as an example of what a production app should look like. The defect on `main` is intentional.

@@ -1,11 +1,14 @@
 name: "Run tests"
 
-# Run tests on pull requests to main and on pushes to main
+# The workshop's `main` branch intentionally contains a failing reproduction
+# (`npm run test:filter-bug`), so pushes to `main` do not run this workflow.
+# Pull requests to `main` do: a green PR is the proof that the fix works.
+# Pushes to `solution` run it to prove the reference solution stays green.
 on:
   pull_request:
     branches: [main]
   push:
-    branches: [main]
+    branches: [solution]
   workflow_dispatch:
 
 # Cancel superseded in-progress runs for the same ref so rapid pushes don't
