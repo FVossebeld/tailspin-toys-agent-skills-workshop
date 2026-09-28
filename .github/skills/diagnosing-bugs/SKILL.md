@@ -11,7 +11,7 @@ Follow the phases in order. Skip a phase only when you state why.
 
 <!--
 TODO(workshop 1/3) — ACTIVATION
-The `description` above is the only part Copilot reads when it decides whether to load this skill.
+Copilot matches a prompt against the `description` above to decide whether to load this skill automatically.
 "Helps with bugs." does not say what the skill does or when to use it. Rewrite it so that a request
 like "the rating filter hides some games" would load this skill without naming it.
 -->
@@ -30,7 +30,7 @@ Hints: references/repository-testing.md and scripts/feedback-loop.mjs.
 
 ## 2. Read just enough context
 
-- Trace the path from the symptom to the code. Start from [architecture-summary.md](references/architecture-summary.md) and `.github/copilot-instructions.md`.
+- Trace the path from the symptom to the code. Start from [architecture-summary.md](references/architecture-summary.md), then open only the files the red loop implicates. Use `.github/copilot-instructions.md` for repository-wide conventions.
 - Delegate wide searches to a subagent and keep only its findings in the main session.
 
 ## 3. Hypothesise before editing

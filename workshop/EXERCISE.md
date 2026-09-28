@@ -1,6 +1,6 @@
 # Exercise — make the engineering method repeatable
 
-**Time:** 30 minutes · **Where:** a Codespace (recommended) or VS Code with a terminal · **Tool:** GitHub Copilot CLI
+**Time:** 30 minutes in a Codespace created before the session (allow 5–10 extra minutes locally on a cold cache) · **Tool:** GitHub Copilot CLI
 
 You will experience three things:
 
@@ -36,7 +36,7 @@ Trust the folder when asked, and sign in with `/login` if prompted. When Copilot
 npm run test:filter-bug
 ```
 
-It fails quickly and every time. Optional: `npm run dev`, open the site and choose **3★ & up**.
+It fails every time. The very first run on a fresh install can take 10–30 seconds; reruns take a few seconds. Optional: `npm run dev`, open the site and choose **3★ & up**.
 
 Write down:
 
@@ -50,7 +50,7 @@ Open [`.github/skills/diagnosing-bugs/SKILL.md`](../.github/skills/diagnosing-bu
 
 | TODO | Improve | Good looks like |
 | --- | --- | --- |
-| 1/3 | **Activation** — the `description` | Says what the skill does *and* when to use it, with trigger phrases a teammate would actually type. |
+| 1/3 | **Activation** — the `description` | Says what the skill does *and* when to use it, with trigger phrases a teammate would actually type. Copilot matches your prompt against it to load the skill automatically. |
 | 2/3 | **Method** — Phase 1 | Requires one command that goes red on this symptom, has been run, is deterministic and fast — *before* any hypothesis or edit. |
 | 3/3 | **Completion** — definition of done | A fixed report: symptom, loop red→green, root cause at `file:line`, accepted/rejected hypotheses, changed files, regression test, exact commands with results, remaining uncertainty. |
 
@@ -61,7 +61,7 @@ Then, in Copilot CLI:
 /skills list
 ```
 
-Optional activation check — in a **new** session, describe the symptom without naming the skill and see whether Copilot loads it:
+You can always invoke a skill explicitly with `/diagnosing-bugs`. Optional activation check — in a **new** session, describe the symptom without naming the skill and see whether Copilot loads it:
 
 ```text
 The minimum-rating filter on the home page hides some games. What would you do first?
@@ -72,7 +72,7 @@ The minimum-rating filter on the home page hides some games. What would you do f
 Run `/context` and note the token count. Then:
 
 ```text
-Use the Explore subagent to investigate the game-filter failure reported by npm run test:filter-bug.
+Use the explore subagent to investigate the game-filter failure reported by npm run test:filter-bug.
 
 Do not modify files.
 
@@ -108,7 +108,7 @@ Watch for:
 ## Phase 5 — Verify separately · 4 min
 
 ```text
-Use the Task subagent to verify the correction.
+Use the task subagent to verify the correction.
 
 Do not change implementation files.
 Run the reproduction and the smallest relevant test suite.
@@ -161,7 +161,7 @@ If the catalog test fails but the unit tests for the same helper pass, which inp
 
 </details>
 
-**Reset your work** (keeps your skill edits):
+**Start over on the code** — discards your changes in `src/` and `e2e-tests/` (including any regression test), keeps your `SKILL.md` edits:
 
 ```bash
 git restore --source=HEAD -- src e2e-tests
@@ -172,5 +172,7 @@ git restore --source=HEAD -- src e2e-tests
 ```bash
 git fetch origin && git diff HEAD origin/demo-start -- .github/skills/diagnosing-bugs/SKILL.md
 ```
+
+**Windows without a Codespace:** use the Node command `node .github/skills/diagnosing-bugs/scripts/feedback-loop.mjs --runs 3 -- npm run test:filter-bug` instead of the `.sh` script.
 
 **Other IDEs:** Copilot CLI runs in any terminal, so you can follow along from JetBrains, Visual Studio or a plain shell. VS Code agent mode also loads the skills in `.github/skills/`.

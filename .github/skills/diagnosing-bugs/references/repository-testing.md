@@ -8,7 +8,7 @@ Everything runs from the repository root with Node.js 22.13+. A command that exi
 | --- | --- | --- |
 | Provided reproduction for the catalog rating-filter report | `npm run test:filter-bug` | ~2 s |
 | Repeat any command and check it is deterministic | `node .github/skills/diagnosing-bugs/scripts/feedback-loop.mjs --runs 3 -- npm run test:filter-bug` | ~6 s |
-| Same, as a shell script (Codespaces, Linux, macOS, Git Bash) | `bash .github/skills/diagnosing-bugs/scripts/reproduce-filter-bug.sh` | ~6 s |
+| Same, as a shell script (Codespaces, Linux, macOS, Git Bash). From PowerShell, use the Node command above | `bash .github/skills/diagnosing-bugs/scripts/reproduce-filter-bug.sh` | ~6 s |
 | One Vitest file | `npx vitest run src/lib/<module>.test.ts` | ~2 s |
 | One Vitest test by name | `npx vitest run src/lib/<module>.test.ts -t "<part of the test name>"` | ~2 s |
 | All unit tests | `npm run test:unit` | ~3 s |

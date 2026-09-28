@@ -1,1 +1,3 @@
 .github/workflows/*.lock.yml linguist-generated=true merge=ours
+# Shell scripts must keep LF endings so they run in Codespaces, WSL and Git Bash.
+*.sh text eol=lf
