@@ -4,7 +4,6 @@
 	"name": "Tailspin Toys — Agent Skills & Subagents workshop",
 	"image": "mcr.microsoft.com/devcontainers/typescript-node:1-22-bookworm",
 	"features": {
-		"ghcr.io/schlich/devcontainer-features/playwright:0": {},
 		// GitHub Copilot CLI, used for the demo and the exercise (`copilot` in the terminal).
 		"ghcr.io/devcontainers/features/copilot-cli:1": {}
 	},

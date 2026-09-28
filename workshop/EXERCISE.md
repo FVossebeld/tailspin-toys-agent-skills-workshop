@@ -44,28 +44,32 @@ Write down:
 - What would a **superficial** correction look like?
 - What evidence would prove the **root cause**?
 
+Then ask Copilot how it *would* approach the bug — read-only, so nothing is fixed yet — and note its **first step**:
+
+```text
+The minimum-rating filter on the home page hides some games that it should show. Describe the first three steps you would take. Do not modify any files.
+```
+
 ## Phase 2 — Improve the skill · 5 min
 
 Open [`.github/skills/diagnosing-bugs/SKILL.md`](../.github/skills/diagnosing-bugs/SKILL.md). It is deliberately incomplete in three places, each marked `TODO(workshop n/3)`.
 
 | TODO | Improve | Good looks like |
 | --- | --- | --- |
-| 1/3 | **Activation** — the `description` | Says what the skill does *and* when to use it, with trigger phrases a teammate would actually type. Copilot matches your prompt against it to load the skill automatically. |
+| 1/3 | **Activation** — the `description` | Says what the skill does *and* when to use it, with trigger phrases a teammate would actually type. Copilot matches your prompt against it to decide whether to load the skill automatically. |
 | 2/3 | **Method** — Phase 1 | Requires one command that goes red on this symptom, has been run, is deterministic and fast — *before* any hypothesis or edit. |
 | 3/3 | **Completion** — definition of done | A fixed report: symptom, loop red→green, root cause at `file:line`, accepted/rejected hypotheses, changed files, regression test, exact commands with results, remaining uncertainty. |
 
-Then, in Copilot CLI:
+Then, in Copilot CLI, reload the skill and start a fresh conversation:
 
 ```text
 /skills reload
-/skills list
+/clear
 ```
 
-You can always invoke a skill explicitly with `/diagnosing-bugs`. Optional activation check — in a **new** session, describe the symptom without naming the skill and see whether Copilot loads it:
+Ask the **same read-only question** from Phase 1 again and compare the first step. With the improved skill it should start from the failing reproduction instead of from a theory.
 
-```text
-The minimum-rating filter on the home page hides some games. What would you do first?
-```
+> **Why the description still matters:** this repository has only two skills, so Copilot often picks `diagnosing-bugs` by its name alone. In a real repository with many skills, the description decides which one loads. You can always invoke a skill explicitly with `/diagnosing-bugs`.
 
 ## Phase 3 — Delegate exploration · 6 min
 
