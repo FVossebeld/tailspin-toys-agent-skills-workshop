@@ -49,6 +49,8 @@ Useful commands inside Copilot CLI:
 
 **25 min.** A skill gives the method, a subagent explores in its own context, and a test proves the fix.
 
+> **You saw this bug fixed in the demo — on purpose.** The fix is not the point of Module 1. The point is that your `SKILL.md` starts incomplete, and you make it good enough that Copilot follows the method you watched: reproduce first, hypotheses with evidence, a regression test, and a report you can check. Judge your run by its method and evidence, not by whether it finds the one-line fix.
+
 ### The bug report
 
 > **Minimum-rating filter hides games it should show**
